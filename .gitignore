@@ -2,3 +2,4 @@ venv/
 errors.log
 logs_result.log
 .idea/
+**/__pycache__

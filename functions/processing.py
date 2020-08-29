@@ -60,3 +60,5 @@ def processing_audio(response, phone_number, state_recognition, save_to_db):
             log_data(data)
         except Exception as error:
             print('An error occurred while adding a record to the database: {}'.format(error))
+    else:
+        log_data(data)

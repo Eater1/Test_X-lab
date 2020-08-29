@@ -21,4 +21,5 @@ def log_data(data):
                 datefmt='%H:%M:%S',
                 level=INFO)
     data['datetime'] = data['datetime'].strftime("%Y-%m-%d %H:%M:%S")
+    data['audio_length'] = f'{data["audio_length"]}s'
     info(str(data).replace('{', '').replace('}', ''))

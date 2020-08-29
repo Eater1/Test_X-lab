@@ -5,8 +5,8 @@ from functions.validator import validator_number_phone, validator_save_db, \
 from functions.logging import log_error
 from os import remove
 
-API_KEY = "****"
-SECRET_KEY = "****"
+API_KEY = "***"
+SECRET_KEY = "***"
 
 client = ClientSTT(API_KEY, SECRET_KEY)
 
