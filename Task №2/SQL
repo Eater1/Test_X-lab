@@ -1,0 +1,59 @@
+--Так как таблицы “Project” и “Server”
+-- небыли в условиях первого задания, поэтому я отдельно создаю эти таблицы через SQL скрипт
+create table project (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR UNIQUE,
+	description VARCHAR
+);
+
+create table server (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR UNIQUE,
+	ip_address VARCHAR,
+	description VARCHAR
+);
+
+-- В таблице “Date_voice” есть пустые поля “project_id” и “server_id” их заполняем некоторыми данными вручную для каждой записи.
+-- Эти данные в будущем будем использовать как ключи к таблицам “Project” и “Server”
+update date_voice set project_id='incoming', server_id='main_server' where id = 'ID записи таблицы date_voice';
+update date_voice set project_id='incoming', server_id='secondary_server' where id = 'ID записи таблицы date_voice';
+update date_voice set project_id='alfa_warm', server_id='secondary_server' where id = 'ID записи таблицы date_voice';
+update date_voice set project_id='alfa_warm', server_id='main_server' where id = 'ID записи таблицы date_voice';
+update date_voice set project_id='alfa_warm', server_id='main_server' where id = 'ID записи таблицы date_voice';
+
+-- Заполняю поля в таблицах "Server" и "Project"
+insert into server (name, ip_address, description) values ('main_server', '123.123.123.213', 'its a main server');
+insert into server (name, ip_address, description) values ('secondary_server', '192.127.0.1', 'its a secondary server');
+
+insert into project (name, description) values ('incoming', 'its an incoming project');
+insert into project (name, description) values ('alfa_warm', 'its an alfa_warm project');
+
+-- Соединяю таблицу "Data_voice" с таблицами "Project" и "Server" внешним ключом
+alter table date_voice add foreign key (project_id) references project(name);
+alter table date_voice add foreign key (server_id) references server(name);
+
+-- Сообственно идут сами SQL запросы которые требуются во втором задании
+-- я не понял как их обьединить и при этом, чтобы они корректно выполняли свои задачи
+-- поэтому я решил разделить их на три запроса
+
+-- Запрос выводящий сумму длин аудио из всех записей за указанный период
+select sum(audio_length) as audio_sum  from date_voice
+where datetime between '2021-01-01' and '2022-12-10';
+
+-- Выводит типы результатов и их количество которое было записанно в указанный период
+select result, count(*) as count_type_result from date_voice
+where datetime between '2020-01-01' and '2020-12-10'
+group by result;
+
+-- Запрос выводящий все записи из таблицы "Data_voice" и записи из таблиц "Project" и "Server"
+-- которые связанны ключом за указанный период
+select datetime, result, phone_number, audio_length,
+       project_id, project.description, server_id,
+       server.description, ip_address
+from date_voice
+  INNER JOIN project ON date_voice.project_id = project.name
+  INNER JOIN server ON date_voice.server_id = server.name
+where datetime between '2020-01-01' and '2020-12-10'
+group by datetime, result, phone_number, audio_length,
+       project_id, project.description, server_id,
+       server.description, ip_address
